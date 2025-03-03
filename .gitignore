@@ -1,0 +1,5 @@
+# Python 캐리 파일 제외
+__pycache__/
+
+# API Key eㅡㅇ 환경 변수 파일 제외
+.env
