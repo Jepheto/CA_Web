@@ -7,6 +7,12 @@
 </head>
 <body class="container mt-5">
   <h1 class="text-center mb-4">유저 정보 조회</h1>
+
+  <!-- 🔹 검색 횟수 표시 -->
+  <div class="alert alert-info text-center">
+    현재까지 <strong>{{ search_count }}</strong>번 검색되었습니다.
+  </div>
+
   <form action="/user" method="get" class="text-center">
     <div class="mb-3">
       <label for="id" class="form-label">유저 ID:</label>
