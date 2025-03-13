@@ -4,70 +4,76 @@
   <meta charset="UTF-8">
   <title>유저 정보 결과</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
- 
-  <!-- 중앙 정렬 -->
   <style>
+    .card-custom {
+      max-width: 800px;
+      margin: auto;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
     }
     th, td {
-      text-align: center;        /* 텍스트 수평 중앙 정렬 */
-      vertical-align: middle;    /* 텍스트 수직 중앙 정렬 */
-      padding: 10px;             /* 내부 여백 */
+      text-align: center;
+      vertical-align: middle;
+      padding: 12px;
     }
   </style>
-
 </head>
-<body class="container mt-5">
-  <h1 class="text-center mb-4">유저 정보</h1>
-
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>항목</th>
-        <th>내용</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>접속 상태</td>
-            <td>
+<body class="bg-light">
+  <div class="container mt-5">
+    <div class="card card-custom shadow-sm">
+      <div class="card-header text-center">
+        <h1 class="mb-0">유저 정보</h1>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover table-striped">
+          <thead>
+            <tr>
+              <th>항목</th>
+              <th>내용</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>접속 상태</td>
+              <td>
                 {% if user_info.is_online %}
-                    <span style="color: green; font-weight: bold;">🟢 접속 중</span>
+                  <span class="text-success fw-bold">🟢 접속 중</span>
                 {% else %}
-                    <span style="color: red; font-weight: bold;">🔴 오프라인</span>
+                  <span class="text-danger fw-bold">🔴 오프라인</span>
                 {% endif %}
                 <br>
                 <small>{{ user_info.check_message }}</small>
-            </td>
-        </tr>
-           
-      <tr>
-        <td>유저 ID</td>
-        <td>{{ user_info.user_id }}</td>
-      </tr>
-      <tr>
-        <td>레벨</td>
-        <td>{{ user_info.level }}</td>
-      </tr>
-      <tr>
-        <td>아이디 생성일</td>
-        <td>{{ user_info.id_birthday }}</td>
-      </tr>
-      <tr>
-        <td>마지막 로그인</td>
-        <td>{{ user_info.last_login }}</td>
-      </tr>
-      <tr>
-        <td>마지막 로그아웃</td>
-        <td>{{ user_info.last_logout }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="text-center mt-4">
-    <a href="/" class="btn btn-secondary">뒤로 가기</a>
+              </td>
+            </tr>
+            <tr>
+              <td>유저 ID</td>
+              <td>{{ user_info.user_id }}</td>
+            </tr>
+            <tr>
+              <td>레벨</td>
+              <td>{{ user_info.level }}</td>
+            </tr>
+            <tr>
+              <td>아이디 생성일</td>
+              <td>{{ user_info.id_birthday }}</td>
+            </tr>
+            <tr>
+              <td>마지막 로그인</td>
+              <td>{{ user_info.last_login }}</td>
+            </tr>
+            <tr>
+              <td>마지막 로그아웃</td>
+              <td>{{ user_info.last_logout }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer text-center">
+        <a href="/" class="btn btn-secondary">뒤로 가기</a>
+      </div>
+    </div>
   </div>
 </body>
 </html>
