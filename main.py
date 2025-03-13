@@ -20,6 +20,10 @@ search_count = search_counting_machine.load_search_count()
 def home():
     return render_template('home.html', search_count=search_count)
 
+@app.route('/add-bot')
+def add_bot():
+    return render_template('add-bot.html')
+
 @app.route('/user', methods=['GET'])
 def get_user():
     global search_count

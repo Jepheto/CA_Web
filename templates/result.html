@@ -2,16 +2,13 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>유저 정보 결과</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .card-custom {
+    .card-container {
       max-width: 800px;
       margin: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
     }
     th, td {
       text-align: center;
@@ -22,53 +19,56 @@
 </head>
 <body class="bg-light">
   <div class="container mt-5">
-    <div class="card card-custom shadow-sm">
+    <div class="card card-container shadow-sm">
       <div class="card-header text-center">
         <h1 class="mb-0">유저 정보</h1>
       </div>
       <div class="card-body">
-        <table class="table table-bordered table-hover table-striped">
-          <thead>
-            <tr>
-              <th>항목</th>
-              <th>내용</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>접속 상태</td>
-              <td>
-                {% if user_info.is_online %}
-                  <span class="text-success fw-bold">🟢 접속 중</span>
-                {% else %}
-                  <span class="text-danger fw-bold">🔴 오프라인</span>
-                {% endif %}
-                <br>
-                <small>{{ user_info.check_message }}</small>
-              </td>
-            </tr>
-            <tr>
-              <td>유저 ID</td>
-              <td>{{ user_info.user_id }}</td>
-            </tr>
-            <tr>
-              <td>레벨</td>
-              <td>{{ user_info.level }}</td>
-            </tr>
-            <tr>
-              <td>아이디 생성일</td>
-              <td>{{ user_info.id_birthday }}</td>
-            </tr>
-            <tr>
-              <td>마지막 로그인</td>
-              <td>{{ user_info.last_login }}</td>
-            </tr>
-            <tr>
-              <td>마지막 로그아웃</td>
-              <td>{{ user_info.last_logout }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- 반응형 테이블 래퍼 -->
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover table-striped">
+            <thead>
+              <tr>
+                <th>항목</th>
+                <th>내용</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>접속 상태</td>
+                <td>
+                  {% if user_info.is_online %}
+                    <span class="text-success fw-bold">🟢 접속 중</span>
+                  {% else %}
+                    <span class="text-danger fw-bold">🔴 오프라인</span>
+                  {% endif %}
+                  <br>
+                  <small>{{ user_info.check_message }}</small>
+                </td>
+              </tr>
+              <tr>
+                <td>유저 ID</td>
+                <td>{{ user_info.user_id }}</td>
+              </tr>
+              <tr>
+                <td>레벨</td>
+                <td>{{ user_info.level }}</td>
+              </tr>
+              <tr>
+                <td>아이디 생성일</td>
+                <td>{{ user_info.id_birthday }}</td>
+              </tr>
+              <tr>
+                <td>마지막 로그인</td>
+                <td>{{ user_info.last_login }}</td>
+              </tr>
+              <tr>
+                <td>마지막 로그아웃</td>
+                <td>{{ user_info.last_logout }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div class="card-footer text-center">
         <a href="/" class="btn btn-secondary">뒤로 가기</a>
