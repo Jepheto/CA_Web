@@ -8,6 +8,7 @@ import search_counting_machine
 
 # .env 파일 로드 및 환경 변수 설정
 load_dotenv()
+
 API_KEY = os.getenv("API_KEY")
 
 app = Flask(__name__)
@@ -66,6 +67,14 @@ async def fetch_user_data(user_id):
                                                   search_count=search_count)
                 user_data = await user_response.json()
 
+            # 길드 정보 조회
+            guild_url = f'https://open.api.nexon.com/ca/v1/user/guild?ouid={ouid}'
+            async with session.get(guild_url, headers=headers) as guild_response:
+                if guild_response.status == 200:
+                    guild_data = await guild_response.json()
+                else:
+                    guild_data = None
+
             # 온라인 여부 및 시간 정보 처리
             online_info = time_conversion_system.is_online(user_data["user_date_last_login"],
                                                             user_data["user_date_last_logout"])
@@ -76,7 +85,8 @@ async def fetch_user_data(user_id):
                 "last_login": time_conversion_system.format_last_login_message(user_data.get("user_date_last_login")),
                 "last_logout": time_conversion_system.format_last_logout_message(user_data.get("user_date_last_logout")),
                 "is_online": online_info["status"],
-                "check_message": online_info["message"]
+                "check_message": online_info["message"],
+                "guild_info": guild_data["guild_id"]
             }
 
             return True, render_template('result.html', user_info=user_info, search_count=search_count)

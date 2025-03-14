@@ -55,6 +55,16 @@
                 <td>{{ user_info.level }}</td>
               </tr>
               <tr>
+                <td>길드 정보</td>
+                <td>
+                  {% if user_info.guild_info %}
+                    {{ user_info.guild_info }}
+                  {% else %}
+                    길드 없음
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
                 <td>아이디 생성일</td>
                 <td>{{ user_info.id_birthday }}</td>
               </tr>
