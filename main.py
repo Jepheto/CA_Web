@@ -4,17 +4,14 @@ import aiohttp
 import asyncio
 import os
 import time_conversion_system
-import search_counting_machine
+import search_counting_machine  # 파일 기반 대신 DB 모듈 사용
 
-# .env 파일 로드 및 환경 변수 설정
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
-
 app = Flask(__name__)
 
-# 검색 횟수 파일 경로 및 초기 검색 횟수 로드
-SEARCH_COUNT_FILE = "search_count.txt"
+# DB에서 검색 횟수를 불러옴
 search_count = search_counting_machine.load_search_count()
 
 @app.route('/')
@@ -34,10 +31,10 @@ def get_user():
                                error_message="ID를 입력해주세요.",
                                search_count=search_count)
 
-    # asyncio.run()을 사용해 비동기 함수 실행
+    # 비동기 함수 실행
     success, result = asyncio.run(fetch_user_data(user_id))
 
-    # 유효한 ID라면 검색 횟수 증가 및 저장
+    # 유효한 ID라면 검색 횟수를 증가시키고 DB에 저장
     if success:
         search_count += 1
         search_counting_machine.save_search_count(search_count)
@@ -86,7 +83,7 @@ async def fetch_user_data(user_id):
                 "last_logout": time_conversion_system.format_last_logout_message(user_data.get("user_date_last_logout")),
                 "is_online": online_info["status"],
                 "check_message": online_info["message"],
-                "guild_info": guild_data["guild_id"]
+                "guild_info": guild_data["guild_id"] if guild_data else None
             }
 
             return True, render_template('result.html', user_info=user_info, search_count=search_count)
