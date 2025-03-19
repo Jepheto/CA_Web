@@ -40,3 +40,5 @@ def is_online(last_login, last_logout):
         return {"status": online, "message": "로그인과 로그아웃 시간이 10초 이내로 차이가 납니다. 상태 판단이 정확하지 않을 수 있습니다."}
     else:
         return {"status": login_time > logout_time, "message": "정상적으로 접속 상태를 판단했습니다."}
+
+

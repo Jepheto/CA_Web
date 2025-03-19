@@ -48,7 +48,7 @@ async def fetch_user_data(user_id):
             # 사용자 ID 정보 조회
             id_url = f'https://open.api.nexon.com/ca/v1/id?user_name={user_id}&world_name=해피'
             async with session.get(id_url, headers=headers) as id_response:
-                if id_response.status == 404:
+                if id_response.status == 400:
                     return False, render_template('error.html',
                                                   error_message="존재하지 않는 아이디이거나, 2022년 1월 1일 이후로 로그인이 없는 아이디일 수 있습니다.",
                                                   search_count=search_count)
@@ -78,6 +78,7 @@ async def fetch_user_data(user_id):
             user_info = {
                 "user_id": user_id,
                 "level": user_data.get("user_level", "알 수 없음"),
+                "exp": user_data.get("user_exp"),
                 "id_birthday": time_conversion_system.format_ID_birthday_message(user_data.get("user_date_create")),
                 "last_login": time_conversion_system.format_last_login_message(user_data.get("user_date_last_login")),
                 "last_logout": time_conversion_system.format_last_logout_message(user_data.get("user_date_last_logout")),
