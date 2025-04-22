@@ -52,16 +52,16 @@
                     <span class="text-danger fw-bold">🔴 오프라인</span>
                   {% endif %}
                   <br>
-                  <small>{{ user_info.check_message }}</small>
+                  <small>{{ user_info.check_message or '정보 없음' }}</small>
                 </td>
               </tr>
               <tr>
                 <td>유저 ID</td>
-                <td>{{ user_info.user_id }}</td>
+                <td>{{ user_info.user_id or '정보 없음' }}</td>
               </tr>
               <tr>
                 <td>레벨 (경험치)</td>
-                <td>{{ user_info.level }}<b>Lv</b> ({{ user_info.exp }} <b>p</b>)</td>
+                <td>{{ user_info.level or '0' }}<b>Lv</b> ({{ user_info.exp or 0 }} <b>p</b>)</td>
               </tr>
               <tr>
                 <td>길드 정보</td>
@@ -75,16 +75,16 @@
               </tr>
               <tr>
                 <td>아이디 생성일</td>
-                <td>{{ user_info.id_birthday }}</td>
+                <td>{{ user_info.id_birthday or '정보 없음' }}</td>
               </tr>
               <tr>
                 <td>마지막 로그인</td>
-                <td>{{ user_info.last_login }}</td>
+                <td>{{ user_info.last_login or '정보 없음' }}</td>
               </tr>
               <tr>
                 <td>마지막 로그아웃</td>
-                <td>{{ user_info.last_logout }}</td>
-              </tr>
+                <td>{{ user_info.last_logout or '정보 없음' }}</td>
+              </tr>              
             </tbody>
           </table>
         </div>

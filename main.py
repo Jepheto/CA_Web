@@ -58,16 +58,16 @@ async def fetch_user_data(user_id):
             online_info = time_conversion_system.is_online(user_data["user_date_last_login"],
                                                             user_data["user_date_last_logout"])
             user_info = {
-                "user_id": user_id,
-                "level": user_data.get("user_level", "알 수 없음"),
-                "exp": user_data.get("user_exp"),
-                "id_birthday": time_conversion_system.format_ID_birthday_message(user_data.get("user_date_create")),
-                "last_login": time_conversion_system.format_last_login_message(user_data.get("user_date_last_login")),
-                "last_logout": time_conversion_system.format_last_logout_message(user_data.get("user_date_last_logout")),
-                "is_online": online_info["status"],
-                "check_message": online_info["message"],
-                "guild_info": guild_data["guild_id"] if guild_data else None
-            }
+                "user_id": user_id or "정보 없음",
+                "level": user_data.get("user_level", "0"),
+                "exp": user_data.get("user_exp", 0),
+                "id_birthday": (time_conversion_system.format_ID_birthday_message(user_data.get("user_date_create")) if user_data.get("user_date_create") else "정보 없음"),
+                "last_login": (time_conversion_system.format_last_login_message(user_data.get("user_date_last_login")) if user_data.get("user_date_last_login") else "정보 없음"),
+                "last_logout": (time_conversion_system.format_last_logout_message(user_data.get("user_date_last_logout")) if user_data.get("user_date_last_logout") else "정보 없음"),
+                "is_online": online_info["status"] if "status" in online_info else False,
+                "check_message": online_info.get("message", "정보 없음"),
+                "guild_info": (guild_data["guild_id"] if guild_data and "guild_id" in guild_data else None)
+}
 
             return True, render_template('result.html', user_info=user_info)
 
@@ -79,4 +79,5 @@ async def fetch_user_data(user_id):
                                           error_message=f"알 수 없는 오류가 발생했습니다: {str(e)}")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
