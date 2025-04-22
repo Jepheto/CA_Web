@@ -59,8 +59,8 @@ async def fetch_user_data(user_id):
                                                             user_data["user_date_last_logout"])
             user_info = {
                 "user_id": user_id or "정보 없음",
-                "level": user_data.get("user_level", "0"),
-                "exp": user_data.get("user_exp", 0),
+                "level": str(user_data.get("user_level", "0")),
+                "exp": str(user_data.get("user_exp", 0)),
                 "id_birthday": (time_conversion_system.format_ID_birthday_message(user_data.get("user_date_create")) if user_data.get("user_date_create") else "정보 없음"),
                 "last_login": (time_conversion_system.format_last_login_message(user_data.get("user_date_last_login")) if user_data.get("user_date_last_login") else "정보 없음"),
                 "last_logout": (time_conversion_system.format_last_logout_message(user_data.get("user_date_last_logout")) if user_data.get("user_date_last_logout") else "정보 없음"),
