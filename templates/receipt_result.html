@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>영수증</title>
+  <style>
+    body {
+      background: #f8f9fa;
+      font-family: 'Courier New', monospace;
+    }
+    .receipt {
+      background: white;
+      border: 1px dashed black;
+      width: 320px;
+      padding: 20px;
+      margin: 50px auto;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+    }
+    .receipt h2 {
+      text-align: center;
+    }
+    .receipt p {
+      margin: 6px 0;
+      white-space: pre-line;
+    }
+    .receipt hr {
+      border: none;
+      border-top: 1px dashed #aaa;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt">
+    <h2>🎟️ 게임 전적 영수증</h2>
+    <hr>
+    <p>닉네임: {{ receipt.user_id }}</p>
+    <p>레벨: {{ receipt.level }} Lv ({{ receipt.exp }}p)</p>
+    <p>길드: {{ receipt.guild_info }}</p>
+    <p>추후에 여러가지 데이터들이 추가되면</p>
+    <p>더 멋있게 만들어보겠습니다!</p>
+    <hr>
+    <p>계정 생성일: {{ receipt.id_birthday }}</p>
+    <p>최근 로그인: {{ receipt.last_login }}</p>
+    <p>최근 로그아웃: {{ receipt.last_logout }}</p>
+    <hr>
+    <p>💬 made by Jepheto</p>
+  </div>
+</body>
+</html>

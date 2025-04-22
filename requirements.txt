@@ -5,3 +5,5 @@ psycopg2-binary # Render SQL 데이터베이스 불러오기
 aiohttp # 비동기 요청 처리
 python-dotenv # 환경 변수 관리 (API Key 숨기기)
 gunicorn # WSGI 서버 (배포 시 필요)
+pyodbc # MSSQL 관련
+

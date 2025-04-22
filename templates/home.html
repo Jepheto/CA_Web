@@ -11,18 +11,23 @@
       margin: auto;
     }
   </style>
+  <!-- GA4 추적 코드 삽입 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHHE92BEHS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-SHHE92BEHS');
+  </script>
 </head>
 <body class="bg-light">
   <div class="container mt-5">
     <div class="form-container card shadow-sm">
       <div class="card-body">
         <h1 class="card-title text-center mb-4">유저 정보 조회</h1>
-        <div class="alert alert-info text-center">
-          현재까지 <strong>{{ search_count }}</strong>번 검색되었습니다.
-        </div>
         <form action="/user" method="get">
           <div class="mb-3">
-            <label for="id" class="form-label">유저 ID:</label>
+            <label for="id" class="form-label"></label>
             <input type="text" id="id" name="id" class="form-control" placeholder="유저 ID를 입력하세요" required>
           </div>
           <div class="d-grid">
@@ -33,6 +38,7 @@
     </div>
     <footer class="text-center mt-4">
       <div class="d-grid gap-2" style="max-width:300px; margin:auto;">
+        <a href="/receipt" class="btn btn-sm" style="background-color: #4a4a4a; color: #fff;">🎟️ 영수증 뽑기</a>
         <a href="https://glowing-musician-50c.notion.site/1abff3dd13ad8094aca8e9dc1e60eaa1?pvs=4" target="_blank" class="btn btn-sm" style="background-color: #000000; color: #fff;">설명서</a>
         <a href="/add-bot" class="btn btn-sm" style="background-color: #333dff; color: #fff;">크아 디스코드 봇 추가하기</a>
         <a href="https://www.youtube.com/@Jepheto82" target="_blank" class="btn btn-sm" style="background-color: red; color: #fff;">제페토 유튜브 가기</a>
