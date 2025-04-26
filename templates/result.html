@@ -9,34 +9,79 @@
     .card-container {
       max-width: 800px;
       margin: auto;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInMoveUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeInMoveUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .table {
+      border-radius: 15px;
+      overflow: hidden;
     }
     th, td {
       text-align: center;
       vertical-align: middle;
+      font-size: 1rem;
       padding: 12px;
     }
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      font-size: 1.05rem;
+    }
+    tbody tr:nth-of-type(odd) {
+      background-color: #fdfdfe;
+    }
+    tbody tr:nth-of-type(even) {
+      background-color: #f5f5f5;
+    }
+    .status-online {
+      color: #198754;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .status-offline {
+      color: #dc3545;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .btn-outline-primary:hover {
+      background-color: #0d6efd;
+      color: white;
+      transition: 0.3s;
+    }
   </style>
+
   <!-- GA4 추적 코드 삽입 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-  
     gtag('config', 'G-SHHE92BEHS');
   </script>
 </head>
+
 <body class="bg-light">
   <div class="container mt-5">
-    <div class="card card-container shadow-sm">
-      <div class="card-header text-center">
-        <h1 class="mb-0">유저 정보</h1>
+    <div class="card card-container">
+      <div class="card-header bg-primary text-white text-center">
+        <h1 class="mb-0">유저 정보 조회 결과</h1>
       </div>
-      <div class="card-body">
-        <!-- 반응형 테이블 래퍼 -->
+      <div class="card-body p-4">
         <div class="table-responsive">
-          <table class="table table-bordered table-hover table-striped">
-            <thead>
+          <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
               <tr>
                 <th>항목</th>
                 <th>내용</th>
@@ -47,12 +92,12 @@
                 <td>접속 상태</td>
                 <td>
                   {% if user_info.is_online %}
-                    <span class="text-success fw-bold">🟢 접속 중</span>
+                    <span class="status-online">🟢 접속 중</span>
                   {% else %}
-                    <span class="text-danger fw-bold">🔴 오프라인</span>
+                    <span class="status-offline">🔴 오프라인</span>
                   {% endif %}
                   <br>
-                  <small>{{ user_info.check_message or '정보 없음' }}</small>
+                  <small class="text-muted">{{ user_info.check_message or '정보 없음' }}</small>
                 </td>
               </tr>
               <tr>
@@ -61,7 +106,7 @@
               </tr>
               <tr>
                 <td>레벨 (경험치)</td>
-                <td>{{ user_info.level or '0' }}<b>Lv</b> ({{ user_info.exp or 0 }} <b>p</b>)</td>
+                <td>{{ user_info.level or '0' }}<b> Lv</b> ({{ user_info.exp or 0 }} <b> EXP</b>)</td>
               </tr>
               <tr>
                 <td>길드 정보</td>
@@ -84,13 +129,13 @@
               <tr>
                 <td>마지막 로그아웃</td>
                 <td>{{ user_info.last_logout or '정보 없음' }}</td>
-              </tr>              
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <div class="card-footer text-center">
-        <a href="/" class="btn btn-secondary">뒤로 가기</a>
+      <div class="card-footer text-center bg-light">
+        <a href="/" class="btn btn-outline-primary px-4 py-2">🏠 홈으로 돌아가기</a>
       </div>
     </div>
   </div>

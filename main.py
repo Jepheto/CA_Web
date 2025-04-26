@@ -1,18 +1,118 @@
 from flask import Flask, request, render_template
 from dotenv import load_dotenv
+from datetime import datetime, timedelta, timezone
+from google.analytics.data_v1beta import BetaAnalyticsDataClient
+from google.analytics.data_v1beta.types import RunReportRequest
+from google.oauth2 import service_account
 import aiohttp
 import asyncio
 import os
 import time_conversion_system
 
+# .env에서 가져오기
 load_dotenv()
-
 API_KEY = os.getenv("API_KEY")
+PROPERTY_ID = os.getenv("PROPERTY_ID")
+CREDENTIALS_PATH = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+credentials = service_account.Credentials.from_service_account_file(CREDENTIALS_PATH)
+client = BetaAnalyticsDataClient(credentials=credentials)
+
+# Flask
 app = Flask(__name__)
 
-@app.route('/')
+def get_now_utc_time():
+    """현재 UTC 시간 반환"""
+    return datetime.now(timezone.utc)
+
+def get_today_and_total_views():
+    """GA4 누적 조회 수 + 오늘 방문 수 가져오기"""
+    request = RunReportRequest(
+        property=f"properties/{PROPERTY_ID}",
+        dimensions=[],
+        metrics=[
+            {"name": "screenPageViews"}, 
+            {"name": "activeUsers"}
+        ],
+        date_ranges=[
+            {"start_date": "2020-01-01", "end_date": "today"},
+            {"start_date": "today", "end_date": "today"},
+        ]
+    )
+    response = client.run_report(request)
+
+    total_views = int(response.rows[0].metric_values[0].value) if len(response.rows) > 0 else 0
+    today_users = int(response.rows[1].metric_values[1].value) if len(response.rows) > 1 else 0
+
+    return total_views, today_users
+
+def get_last_7_days_visits_and_views():
+    """GA4 최근 7일 (오늘까지) 방문자 수 + 조회 수 가져오기 (UTC 기준)"""
+    today = get_now_utc_time()
+    start_date = (today - timedelta(days=6)).strftime("%Y-%m-%d")  # 6일 전부터
+    end_date = today.strftime("%Y-%m-%d")  # 오늘까지
+
+    request = RunReportRequest(
+        property=f"properties/{PROPERTY_ID}",
+        dimensions=[{"name": "date"}],
+        metrics=[
+            {"name": "activeUsers"},
+            {"name": "screenPageViews"}
+        ],
+        date_ranges=[{"start_date": start_date, "end_date": end_date}],
+        order_bys=[{
+            "dimension": {"dimension_name": "date"},
+            "desc": False
+        }]
+    )
+
+    response = client.run_report(request)
+
+    # 오늘 포함 7일치 날짜 리스트 만들기
+    date_list = []
+    for i in range(6, -1, -1):  # 6~0
+        date = today - timedelta(days=i)
+        formatted_date = f"{date.month:02}/{date.day:02}"
+        date_list.append(formatted_date)
+
+    visits_dict = {date: 0 for date in date_list}
+    views_dict = {date: 0 for date in date_list}
+
+    if response.rows:
+        for row in response.rows:
+            if len(row.metric_values) >= 2:
+                raw_date = row.dimension_values[0].value
+                formatted_date = f"{raw_date[4:6]}/{raw_date[6:]}"
+                if formatted_date in visits_dict:
+                    visits_dict[formatted_date] = int(row.metric_values[0].value)
+                    views_dict[formatted_date] = int(row.metric_values[1].value)
+            else:
+                print(f"⚠️ 경고: metric_values 부족 - {row}")
+    else:
+        print("⚠️ 경고: GA4 데이터가 없습니다 (response.rows 비어있음)")
+
+    visits = [visits_dict[date] for date in date_list]
+    views = [views_dict[date] for date in date_list]
+
+    return date_list, visits, views
+
+@app.route("/")
 def home():
-    return render_template('home.html')
+    try:
+        total_views, today_users = get_today_and_total_views()
+        dates, visits, views = get_last_7_days_visits_and_views()
+    except Exception as e:
+        print(f"GA4 데이터 가져오기 오류: {e}")
+        total_views, today_users = 0, 0
+        dates, visits, views = [], [], []
+    
+    return render_template(
+        "home.html",
+        total_views=total_views,
+        today_users=today_users,
+        dates=dates,
+        visits=visits,
+        views=views
+    )
 
 @app.route('/add-bot')
 def add_bot():
@@ -79,4 +179,5 @@ async def fetch_user_data(user_id):
                                           error_message=f"알 수 없는 오류가 발생했습니다: {str(e)}")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run (debug=True)

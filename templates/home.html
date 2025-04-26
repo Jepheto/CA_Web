@@ -11,7 +11,7 @@
       margin: auto;
     }
   </style>
-  <!-- GA4 추적 코드 삽입 -->
+  <!-- GA4 추적 코드 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-SHHE92BEHS"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -20,31 +20,208 @@
     gtag('config', 'G-SHHE92BEHS');
   </script>
 </head>
+
 <body class="bg-light">
+  <!-- 총 이용자 수 출력 -->
+  <div class="text-center mt-2">
+    <small class="text-primary"><strong>총 이용 횟수: {{ total_views | default(0) }}회</strong></small>
+  </div>
+
   <div class="container mt-5">
+    <!-- 유저 정보 조회 폼 -->
     <div class="form-container card shadow-sm">
       <div class="card-body">
         <h1 class="card-title text-center mb-4">유저 정보 조회</h1>
         <form action="/user" method="get">
-          <div class="mb-3">
-            <label for="id" class="form-label"></label>
+          <div class="input-group mb-3">
             <input type="text" id="id" name="id" class="form-control" placeholder="유저 ID를 입력하세요" required>
-          </div>
-          <div class="d-grid">
             <button type="submit" class="btn btn-primary">조회</button>
           </div>
         </form>
+        <div class="text-center">
+          <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#visitStatsModal">
+            📈 방문 추이 보기
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- 기타 링크 버튼들 -->
     <footer class="text-center mt-4">
       <div class="d-grid gap-2" style="max-width:300px; margin:auto;">
-        <a href="/receipt" class="btn btn-sm" style="background-color: #4a4a4a; color: #fff;">🎟️ 영수증 뽑기</a>
+        <button type="button" class="btn btn-sm" style="background-color: #4a4a4a; color: #fff;" data-bs-toggle="modal" data-bs-target="#receiptModal">
+          🎟️ 영수증 뽑기
+        </button>
         <a href="https://glowing-musician-50c.notion.site/1abff3dd13ad8094aca8e9dc1e60eaa1?pvs=4" target="_blank" class="btn btn-sm" style="background-color: #000000; color: #fff;">설명서</a>
         <a href="/add-bot" class="btn btn-sm" style="background-color: #333dff; color: #fff;">크아 디스코드 봇 추가하기</a>
         <a href="https://www.youtube.com/@Jepheto82" target="_blank" class="btn btn-sm" style="background-color: red; color: #fff;">제페토 유튜브 가기</a>
       </div>
-      <p class="mt-3"><strong> made by Jepheto </strong></p>
+      <p class="mt-3"><strong>made by Jepheto</strong></p>
     </footer>
   </div>
+
+  <!-- 영수증 준비 중 모달 -->
+  <div class="modal fade" id="receiptModal" tabindex="-1" aria-labelledby="receiptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="receiptModalLabel">영수증 기능</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          영수증 기능은 현재 준비 중입니다!<br>
+          추후 업데이트를 기대해주세요 ✨
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 방문 추이 모달 -->
+  <div class="modal fade" id="visitStatsModal" tabindex="-1" aria-labelledby="visitStatsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="visitStatsModalLabel">📈 방문 추이 그래프</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-0 d-flex flex-column align-items-center">
+          <div class="w-100" style="max-width: 700px;">
+            <canvas id="visitChart"></canvas>
+          </div>
+          <div class="text-center mt-2 mb-2">
+            <small class="text-muted">※ 업데이트가 불규칙한 데이터입니다.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="text-center w-100">
+            <button id="showVisitsBtn" class="btn btn-outline-primary btn-sm me-2">방문자 수 보기</button>
+            <button id="showViewsBtn" class="btn btn-outline-success btn-sm">조회 수 보기</button>
+            <button type="button" class="btn btn-secondary btn-sm ms-2" data-bs-dismiss="modal">닫기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- 부트스트랩 JS, Chart.js 추가 -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- 방문 추이 Chart.js 스크립트 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var visitChart;
+      var dates = {{ dates|tojson }};
+      var visits = {{ visits|tojson }};
+      var views = {{ views|tojson }};
+    
+      function createGradient(ctx, color) {
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        return gradient;
+      }
+    
+      function createChart(labels, data, labelName, lineColor) {
+        const ctx = document.getElementById('visitChart').getContext('2d');
+        if (visitChart) {
+          visitChart.destroy();
+        }
+    
+        visitChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: labelName,
+              data: data,
+              fill: true,
+              backgroundColor: createGradient(ctx, lineColor),
+              borderColor: lineColor,
+              pointBackgroundColor: lineColor,
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: lineColor,
+              tension: 0.4,
+              borderWidth: 3,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            }]
+          },
+          options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 2,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: labelName + ' 최근 7일 추이'
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.7)',
+              titleFont: { size: 16 },
+              bodyFont: { size: 14 },
+              padding: 10,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                maxRotation: 0,
+                minRotation: 0,
+                autoSkip: false,
+                font: {
+                  size: 12
+                }
+              },
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                font: {
+                  size: 12
+                }
+              },
+              grid: {
+                color: 'rgba(200,200,200,0.2)'
+              }
+            }
+          },
+          animation: {
+            duration: 1200,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
+      }
+    
+      var visitStatsModal = document.getElementById('visitStatsModal');
+      visitStatsModal.addEventListener('shown.bs.modal', function () {
+        if (!visitChart) {
+          createChart(dates, visits, '방문자 수', 'rgba(75, 192, 192, 1)');
+        }
+      });
+    
+      document.getElementById('showVisitsBtn').addEventListener('click', function() {
+        createChart(dates, visits, '방문자 수', 'rgba(75, 192, 192, 1)');
+      });
+    
+      document.getElementById('showViewsBtn').addEventListener('click', function() {
+        createChart(dates, views, '조회 수', 'rgba(255, 159, 64, 1)');
+      });
+    });
+    </script>    
 </body>
 </html>
